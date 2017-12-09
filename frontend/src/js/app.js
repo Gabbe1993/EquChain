@@ -3,8 +3,8 @@ App = {
     web3Provider: null,
     contracts: {},
     companies: {},
-    marketEmus: 0,
     market:[],
+    account: 0x0,
 
     init: function () {
         return App.initWeb3();
@@ -26,16 +26,28 @@ App = {
         $.getJSON('tradingEmissions.json', function (data) {
             console.log(data);
             // Get the necessary contract artifact file and instantiate it with truffle-contract
-            var AdoptionArtifact = data;
-            App.contracts.TradingEmissions = TruffleContract(AdoptionArtifact);
+            var contr = data;
+            App.contracts.TradingEmissions = TruffleContract(contr);
 
             // Set the provider for our contract
             App.contracts.TradingEmissions.setProvider(App.web3Provider);
+            App.account = App.getAccount();
 
+            App.addToCompanies(App.account);
             // Use our contract to retrieve and mark the adopted pets
             return App.updateMarket();
         });
         return App.bindEvents();
+    },
+
+    addToCompanies: function (company) {
+        App.companies.push(company);
+        console.log("added " + company + " to companies");
+    },
+
+    addToMarket: function (company) {
+        App.market.push(company);
+        console.log("added " + company + " to market");
     },
 
     bindEvents: function () {
@@ -51,7 +63,7 @@ App = {
 
                 for (var i = 0; i < App.market.length; i++) {
                     var seller = App.market[i];
-                    var emus = emInstance.getEmus(seller.address, {from: account});
+                    var emus = emInstance.getEmus(seller.address, {from: App.account});
                     App.marketEmus += emus;
                 }
                 //$('marketEmus').text('Market = ' + marketEmus);
@@ -62,48 +74,65 @@ App = {
         });
     },
 
-    sell: function (account, enumsToSell) {
-        console.log("sell");
+    sell: function () {
+        var emusToSell = document.getElementById('form-sell').value;
+        console.log("sell " + App.account + " , " + emusToSell);
         var emInstance;
 
         App.contracts.TradingEmissions.deployed().then(function (instance) {
             emInstance = instance;
-            emInstance.putEmusOnSale(enumsToSell, {from: account});
-            console.log("put " + enumsToSell + " on sale");
+            emInstance.putEmusOnSale(emusToSell, {from: App.account});
+            console.log("put enums " + emusToSell + " on sale");
 
-            var company = App.companies[account];
-            console.log("put " + company + " on market");
-            company.enumsToSell = enumsToSell;
-            App.market.push(company);
+            var company = App.companies[App.account];
+           // company.enumsToSell = emusToSell;
+
+            App.addToMarket(company);
             App.updateMarket();
+
         }).catch(function (err) {
             console.log(err.message);
         });
     },
 
 
-    buy: function (account, emusToBuy) {
-        console.log("buy");
+    buy: function () {
+        var emusToBuy = document.getElementById('form-buy').value;
+        console.log("buy " + emusToBuy);
         var emInstance;
 
         App.contracts.TradingEmissions.deployed().then(function (instance) {
             emInstance = instance;
 
-            var i = 0;
-            while (emusToBuy > 0) {
-                var seller = App.market[i++];
-
-                if (seller !== undefined && seller.address !== '0x0000000000000000000000000000000000000000' && seller.emus > 0) {
-                    var emus = seller.emus;
-                    emInstance.buyEmus(seller.address, emus, {from: account});
-                    console.log("bought " + emus + " from " + seller);
-                    emusToBuy -= emus;
+            for(var i = 0; i < App.market.length; i++) {
+                if (emusToBuy > 0) {
+                    var seller = App.market[i];
+                    console.log("seller = " + seller);
+                    if (seller !== undefined && seller.address !== '0x0000000000000000000000000000000000000000' && seller.emus > 0) {
+                        var emus = seller.emus;
+                        emInstance.buyEmus(seller.address, emus, {from: App.account});
+                        console.log("bought " + emus + " from " + seller);
+                        emusToBuy -= emus;
+                    }
                 }
             }
             App.updateMarket();
         }).catch(function (err) {
             console.log(err.message);
         });
+    },
+
+    getAccount : function() {
+        var account = undefined;
+        web3.eth.getAccounts(function(error, accounts) {
+            if (error) {
+                console.log(error);
+            }
+            account = accounts[0];
+            console.log("got accounts = " + accounts);
+
+        });
+        return account;
     }
 };
 
@@ -112,14 +141,4 @@ $(function () {
         App.init();
     });
 });
-  /*getAccount : function(event) {
-    web3.eth.getAccounts(function(error, accounts) {
-      if (error) {
-        console.log(error);
-      }
-      var account = accounts[0];
-      console.log("got accounts = " + accounts)
-      return account;
-    })
-  },*/
 
