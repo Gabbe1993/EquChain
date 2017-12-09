@@ -2,7 +2,7 @@
 App = {
     web3Provider: null,
     contracts: {},
-    companies: {},
+    //companies: {},
     market:[],
     account: 0x0,
 
@@ -31,9 +31,9 @@ App = {
 
             // Set the provider for our contract
             App.contracts.TradingEmissions.setProvider(App.web3Provider);
-            App.account = App.getAccount();
+            account = App.getAccount();
 
-            App.addToCompanies(App.account);
+            // App.addToCompanies(account);
             // Use our contract to retrieve and mark the adopted pets
             return App.updateMarket();
         });
@@ -45,9 +45,13 @@ App = {
         console.log("added " + company + " to companies");
     },
 
-    addToMarket: function (company) {
-        App.market.push(company);
-        console.log("added " + company + " to market");
+    addToMarket: function (address) {
+        if(App.market[address] == undefined) {
+            App.market.push(address);
+            console.log("added " + address + " to market");
+        } else {
+            console.log(address + " already in market");
+        }
     },
 
     bindEvents: function () {
@@ -59,15 +63,21 @@ App = {
     // TODO: add register company, remove company
     updateMarket: function () {
         App.contracts.TradingEmissions.deployed().then(function (instance) {
-                emInstance = instance;
+                console.log(instance.contract);
+                emInstance = instance.contract;
+                var marketEmus = 0;
 
                 for (var i = 0; i < App.market.length; i++) {
-                    var seller = App.market[i];
-                    var emus = emInstance.getEmus(seller.address, {from: App.account});
-                    App.marketEmus += emus;
+                    var sellerAccount = App.market[i];
+                    console.log("seller = " + sellerAccount);
+                    if(sellerAccount !== undefined) {
+                        var emus = emInstance.getEmus({from: account});
+                        console.log("emus from contract =  " + emus)
+                        marketEmus += emus;
+                    }
                 }
-                //$('marketEmus').text('Market = ' + marketEmus);
-                console.log("updated market to =  " + App.marketEmus);
+                document.getElementById('marketEmus').innerHTML = marketEmus;
+                console.log("updated market to =  " + marketEmus);
             }
         ).catch(function (err) {
             console.log(err.message);
@@ -76,19 +86,21 @@ App = {
 
     sell: function () {
         var emusToSell = document.getElementById('form-sell').value;
-        console.log("sell " + App.account + " , " + emusToSell);
+        console.log("sell " + account + " , " + emusToSell);
         var emInstance;
 
         App.contracts.TradingEmissions.deployed().then(function (instance) {
             emInstance = instance;
-            emInstance.putEmusOnSale(emusToSell, {from: App.account});
+            emInstance.putEmusOnSale(emusToSell, {from: account});
             console.log("put enums " + emusToSell + " on sale");
+            // console.log(App.companies)
+            // var company = App.companies[account];
+            // company.enumsToSell = emusToSell;
 
-            var company = App.companies[App.account];
-           // company.enumsToSell = emusToSell;
-
-            App.addToMarket(company);
-            App.updateMarket();
+            App.addToMarket(account);
+            var val = document.getElementById('marketEmus').innerHTML;
+            document.getElementById('marketEmus').innerHTML = parseInt(val) + parseInt(emusToSell);
+            //App.updateMarket();
 
         }).catch(function (err) {
             console.log(err.message);
@@ -110,7 +122,7 @@ App = {
                     console.log("seller = " + seller);
                     if (seller !== undefined && seller.address !== '0x0000000000000000000000000000000000000000' && seller.emus > 0) {
                         var emus = seller.emus;
-                        emInstance.buyEmus(seller.address, emus, {from: App.account});
+                        emInstance.buyEmus(seller.address, emus, {from: account});
                         console.log("bought " + emus + " from " + seller);
                         emusToBuy -= emus;
                     }
@@ -123,16 +135,13 @@ App = {
     },
 
     getAccount : function() {
-        var account = undefined;
-        web3.eth.getAccounts(function(error, accounts) {
+        return web3.eth.getAccounts(function(error, accounts) {
             if (error) {
                 console.log(error);
             }
-            account = accounts[0];
-            console.log("got accounts = " + accounts);
-
+            console.log("got accounts = " + accounts[0]);
+            return account = accounts[0];
         });
-        return account;
     }
 };
 

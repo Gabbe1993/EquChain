@@ -46,7 +46,7 @@ contract tradingEmissions is mortal {
     _;
   }
   
-  function buyEmus(address seller, uint emus) public payable// TODO QUEUE for buying instead of specifying seller
+  function buyEmus(address seller, uint emus) public payable // TODO QUEUE for buying instead of specifying seller
     isCompany(seller)
     isCompany(msg.sender)
     enoughFreeUnits(seller,emus,msg.value)
@@ -151,7 +151,31 @@ contract tradingEmissions is mortal {
   }
 
   // Getters
+  
+  function getName() isCompany(msg.sender)
+  view public returns (string)
+  {
+    return companies[msg.sender].name;
+  }
 
+  function getEmus() isCompany(msg.sender) view public returns (int)   
+  {
+    return companies[msg.sender].emus;
+  }
+    
+  function getEmuLimit()  isCompany(msg.sender) view public returns (uint)   
+  {
+    return companies[msg.sender].emuLimit;
+  }
 
+  function getEmusOnSale() isCompany(msg.sender) view public returns (uint)    
+  {
+    return companies[msg.sender].emusOnSale;
+  }
 
+  function getFine()  isCompany(msg.sender) view public returns (uint)   
+  {
+    return companies[msg.sender].fine;
+  }
+  
 }
