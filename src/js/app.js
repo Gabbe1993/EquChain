@@ -91,7 +91,7 @@ App = {
 
         App.contracts.TradingEmissions.deployed().then(function (instance) {
             emInstance = instance;
-            emInstance.putEmusOnSale(emusToSell, {from: account});
+            emInstance.putEmusOnSale(emusToSell);
             console.log("put enums " + emusToSell + " on sale");
             // console.log(App.companies)
             // var company = App.companies[account];
@@ -120,18 +120,30 @@ App = {
                 if (emusToBuy > 0) {
                     var seller = App.market[i];
                     console.log("seller = " + seller);
-                    if (seller !== undefined && seller.address !== '0x0000000000000000000000000000000000000000' && seller.emus > 0) {
-                        var emus = seller.emus;
-                        emInstance.buyEmus(seller.address, emus, {from: account});
-                        console.log("bought " + emus + " from " + seller);
-                        emusToBuy -= emus;
-                        
-                        var val = document.getElementById('marketEmus').innerHTML;
-                        document.getElementById('marketEmus').innerHTML = parseInt(val) - parseInt(emusToBuy);
+                    if (seller !== undefined && seller !== '0x0000000000000000000000000000000000000000') {                        
+                      /*   emInstance.getEmusOnSale(function(err, data) { 
+                             if(err) {
+                                 console.log("ERROOOOOR " + err);
+                             }
+                            // TODO: Error: new BigNumber() not a number: function (err, data) 
+                            console.log("data = " + data);
+                            var emusOnSale = new BigNumber(data);
+
+                            console.log("emusOnSale = " + emusOnSale);                         
+                            console.log("buys from " + seller);
+
+                            emInstance.buyEmus(seller, emusOnSale, {from: account, value:web3.toWei('200','wei')});
+                            console.log("bought " + emusOnSale + " from " + seller);
+                            emusToBuy -= emusOnSale;
+                            
+                            var val = document.getElementById('marketEmus').innerHTML;
+                            document.getElementById('marketEmus').innerHTML = parseInt(val) - emusToBuy; 
+                          */
+                          emInstance.buyEmus(seller, emusToBuy, {from: account, value:web3.toWei('200','wei')});
+                        }
                     }
                 }
-            }
-            
+            console.log("got here");
             App.updateMarket();
         }).catch(function (err) {
             console.log(err.message);

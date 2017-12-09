@@ -32,6 +32,7 @@ contract tradingEmissions is mortal {
   /* Constructor */
   function tradingEmissions() public {
     creator = msg.sender;
+    addCompany(msg.sender, "testcompany", 500);
   }
 
   modifier isCompany(address ad){
@@ -152,8 +153,7 @@ contract tradingEmissions is mortal {
 
   // Getters
   
-  function getName() isCompany(msg.sender)
-  view public returns (string)
+  function getName() isCompany(msg.sender) view public returns (string)
   {
     return companies[msg.sender].name;
   }
@@ -168,9 +168,8 @@ contract tradingEmissions is mortal {
     return companies[msg.sender].emuLimit;
   }
 
-  function getEmusOnSale() isCompany(msg.sender) view public returns (uint)    
-  {
-    return companies[msg.sender].emusOnSale;
+  function getEmusOnSale() isCompany(msg.sender) view public returns (bytes32) {
+    return bytes32(companies[msg.sender].emusOnSale);
   }
 
   function getFine()  isCompany(msg.sender) view public returns (uint)   
