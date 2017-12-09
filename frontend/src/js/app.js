@@ -3,6 +3,7 @@ App = {
     web3Provider: null,
     contracts: {},
     companies: {},
+    marketEmus: 0,
     market:[],
 
     init: function () {
@@ -38,24 +39,23 @@ App = {
     },
 
     bindEvents: function () {
-        $(document).on('click', '.btn-buy', App.buy);
-        $(document).on('click', '.btn-sell', App.sell);
+        $(document).on('click', '#btn-buy', App.buy);
+        $(document).on('click', '#btn-sell', App.sell);
         // $(document).on('click', '.btn-update', App.updateMarket);
     },
 
     // TODO: add register company, remove company
-
     updateMarket: function () {
         App.contracts.TradingEmissions.deployed().then(function (instance) {
                 emInstance = instance;
 
-                for (i = 0; i < market.length; i++) {
-                    var seller = market[i];
+                for (var i = 0; i < App.market.length; i++) {
+                    var seller = App.market[i];
                     var emus = emInstance.getEmus(seller.address, {from: account});
-                    marketEmus += emus;
+                    App.marketEmus += emus;
                 }
-                $('marketEmus').text('Market = ' + marketEmus);
-                console.log("updated market to =  " + marketEmus);
+                //$('marketEmus').text('Market = ' + marketEmus);
+                console.log("updated market to =  " + App.marketEmus);
             }
         ).catch(function (err) {
             console.log(err.message);
