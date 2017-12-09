@@ -128,6 +128,8 @@ App = {
                     }
                 }
             }
+            var val = document.getElementById('marketEmus').innerHTML;
+            document.getElementById('marketEmus').innerHTML = parseInt(val) - parseInt(emusToBuy);
             App.updateMarket();
         }).catch(function (err) {
             console.log(err.message);
