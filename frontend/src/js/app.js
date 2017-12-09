@@ -18,6 +18,7 @@ App = {
     }
     web3 = new Web3(App.web3Provider);
 
+
     return App.initContract();
   },
 
@@ -33,6 +34,7 @@ App = {
       // Use our contract to retrieve and mark the adopted pets
       return App.updateMarket();
     });
+
 
     return App.bindEvents();
   },
@@ -116,6 +118,7 @@ App = {
       console.log("got accounts = " + accounts)
       return account;
     }
+
   }
 
 $(function() {
