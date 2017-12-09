@@ -151,35 +151,7 @@ contract tradingEmissions is mortal {
   }
 
   // Getters
-  
-  function getName() view public returns (string)
-    isCompany(msg.sender)
-  {
-    return companies[msg.sender].name;
-  }
 
-  function getEmus() view public returns (int)
-    isCompany(msg.sender)
-  {
-    return companies[msg.sender].emus;
-  }
-    
-  function getEmuLimit() view public returns (uint)
-    isCompany(msg.sender)
-  {
-    return companies[msg.sender].emuLimit;
-  }
 
-  function getEmusOnSale() view public returns (uint)
-    isCompany(msg.sender)
-  {
-    return companies[msg.sender].emusOnSale;
-  }
 
-  function getFine() view public returns (uint)
-    isCompany(msg.sender)
-  {
-    return companies[msg.sender].fine;
-  }
-  
 }

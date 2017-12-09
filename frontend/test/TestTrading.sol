@@ -2,13 +2,14 @@ pragma solidity ^0.4.11;
 
 import "truffle/Assert.sol";
 import "truffle/DeployedAddresses.sol";
-import "../contracts/Adoption.sol";
+import "../contracts/TradingEmissions.sol";
 
 contract TestAdoption {
   Adoption adoption = Adoption(DeployedAddresses.Adoption());
 
   // Testing the adopt() function
   function testUserCanAdoptPet() {
+
   	uint returnedId = adoption.adopt(8);
 
   	uint expected = 8;
