@@ -233,6 +233,17 @@ App = {
         }).catch(function (err) {
             console.log(err.message);
         });
+    },
+
+    setBalance : function () {
+        App.contracts.TradingEmissions.deployed().then(function (instance) {
+            emInstance = instance;
+
+            document.getElementById('balance').innerHTML = emInstance.getEmus({from:App.getAccount()});
+            // App.updateMarket();
+        }).catch(function (err) {
+            console.log(err.message);
+        });
     }
 }
 
