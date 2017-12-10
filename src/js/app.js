@@ -163,6 +163,7 @@ App = {
             App.setEmusOnSale(test);
             App.setEmusLimit(test);
             App.setFine(test);
+            App.setBalance(test);
         });
     },
 
@@ -235,11 +236,11 @@ App = {
         });
     },
 
-    setBalance : function () {
+    setBalance : function (account) {
         App.contracts.TradingEmissions.deployed().then(function (instance) {
             emInstance = instance;
 
-            document.getElementById('balance').innerHTML = emInstance.getEmus({from:App.getAccount()});
+            document.getElementById('balance').innerHTML = account.yourBalance; // only for test, should call solidity function
             // App.updateMarket();
         }).catch(function (err) {
             console.log(err.message);
