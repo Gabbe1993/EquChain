@@ -139,7 +139,7 @@ App = {
                             var val = document.getElementById('marketEmus').innerHTML;
                             document.getElementById('marketEmus').innerHTML = parseInt(val) - emusToBuy; 
                           */
-                          emInstance.buyEmus(seller, emusToBuy, {from: account, value:web3.toWei('200','wei')});
+                          emInstance.buyEmus(seller, emusToBuy, {from: account, value:200});
                         }
                     }
                 }
