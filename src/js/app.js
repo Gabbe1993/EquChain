@@ -1,10 +1,10 @@
-//noinspection JSAnnotator
+
+    
 App = {
     web3Provider: null,
     contracts: {},
     market:[],
     mEmus: 0,
-
     init: function () {
         return App.initWeb3();
     },
@@ -148,6 +148,23 @@ App = {
         });
     },
 
+    updateAccount : function() {
+        console.log("updates account info");
+        App.getAccount(function(account) {
+
+            // only for test
+            var test = {
+                yourEmusOnSale: 0,
+                yourFine: 0,
+                yourBalance: Math.floor(Math.random() * 1000),
+                yourEmusLimit: Math.floor(Math.random() * 1000)
+            };
+
+            App.setEmusOnSale(test);
+            App.setEmusLimit(test);
+            App.setFine(test);
+        });
+    },
 
     // Updates market
     updateMarketWhenMined : function(emus, callback) {
@@ -166,40 +183,52 @@ App = {
         });
     },
 
-    setEmusOnSale : function () {
-        var emInstance;
 
+    setEmusOnSale : function (account) {
+        var emInstance;
+        
         App.contracts.TradingEmissions.deployed().then(function (instance) {
             emInstance = instance;
+            console.log("instance = " + instance.address);
 
-            document.getElementById('emusOnSale').innerHTML = emInstance.getEmusOnSale({from:App.getAccount()});
+            document.getElementById('emusOnSale').innerHTML = account.yourEmusOnSale; // only for test, should call solidity function
+
+            emInstance.getName().then(function(data) {
+                console.log("data = " + data);                             
+            });
             // App.updateMarket();
         }).catch(function (err) {
             console.log(err.message);
         });
     },
 
-    setEmusLimit : function () {
+    setEmusLimit : function (account) {
         var emInstance;
 
         App.contracts.TradingEmissions.deployed().then(function (instance) {
             emInstance = instance;
 
+            document.getElementById('emusLimit').innerHTML = account.yourEmusLimit; // only for test, should call solidity function
 
-            document.getElementById('emusLimit').innerHTML = emInstance.getEmuLimit({from:App.getAccount()});
+            emInstance.getEmuLimit().then(function(data) {          
+            });
             // App.updateMarket();
         }).catch(function (err) {
             console.log(err.message);
         });
     },
 
-    setFine : function () {
+    setFine : function (account) {
         var emInstance;
 
         App.contracts.TradingEmissions.deployed().then(function (instance) {
             emInstance = instance;
 
-            document.getElementById('fine').innerHTML = emInstance.getFine({from:App.getAccount()});
+            document.getElementById('fine').innerHTML = account.yourFine; // only for test, should call solidity function
+
+            emInstance.getFine().then(function(data) {
+                console.log(data);
+            });
             // App.updateMarket();
         }).catch(function (err) {
             console.log(err.message);
