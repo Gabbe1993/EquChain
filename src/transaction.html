@@ -52,7 +52,7 @@
         <div class="col-sm-3 col-md-2 sidebar">
             <ul class="nav nav-sidebar">
                 <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
-                <li><a href="balance.html">Balance</a></li>
+                <li><a href="">Balance</a></li>
                 <li><a href="transaction.html">Transaction</a></li>
                 <li><a href="#">History</a></li>
             </ul>
@@ -62,9 +62,19 @@
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main opc">
             <h1 class="page-header">Transaction</h1>
-            <p class="font-weight-normal">Available Emus in the market:</p>
-            <h1 style='vertical-align:middle; display:inline;' id="marketEmus">000</h1>
-            <img style='vertical-align:middle;' src='images/flame-32.png'>
+            <div class="row">
+                <div class="col-sm-6">
+                    <p class="font-weight-normal">Available Emus in the market:</p>
+                    <h1 style='vertical-align:middle; display:inline;' id="marketEmus">000</h1>
+                    <img style='vertical-align:middle;' src='images/flame-32.png'>
+                </div>
+                <div class="col-sm-6">
+                    <p class="font-weight-normal">Balance in your account:</p>
+                    <h1 style='vertical-align:middle; display:inline;' id="balanceETH">000</h1>
+                    <h1 style='vertical-align:middle; display:inline;' >ETH</h1>
+                </div>
+            </div>
+            <hr class="blackline">
             <div class="row">
                 <div class="col-sm-6">
                     <div class="card">
@@ -79,7 +89,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="col-sm-6">
                     <div class="card">
                         <div class="card-body">
