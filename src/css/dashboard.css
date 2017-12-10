@@ -125,3 +125,14 @@ body {
     color: black;
     border: solid 0.5px black;
 }
+
+.parent {
+    display: table;
+    table-layout: fixed;
+}
+
+.child {
+    display:table-cell;
+    vertical-align:middle;
+    text-align:center;
+}
