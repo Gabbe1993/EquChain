@@ -18,6 +18,8 @@ App = {
             App.web3Provider = new Web3.providers.HttpProvider('http://localhost:8545');
         }
         web3 = new Web3(App.web3Provider);
+
+        App.updateAccount();
         return App.initContract();
     },
 
@@ -156,7 +158,7 @@ App = {
             var test = {
                 yourEmusOnSale: 0,
                 yourFine: 0,
-                yourBalance: Math.floor(Math.random() * 1000),
+                yourBalance: Math.floor(Math.random() * 100),
                 yourEmusLimit: Math.floor(Math.random() * 1000)
             };
 
