@@ -164,6 +164,46 @@ App = {
             console.log("accounts[0] = " + accounts[0]);
             callback(accounts[0]);
         });
+    },
+
+    setEmusOnSale : function () {
+        var emInstance;
+
+        App.contracts.TradingEmissions.deployed().then(function (instance) {
+            emInstance = instance;
+
+            document.getElementById('emusOnSale').innerHTML = emInstance.getEmusOnSale({from:App.getAccount()});
+            // App.updateMarket();
+        }).catch(function (err) {
+            console.log(err.message);
+        });
+    },
+
+    setEmusLimit : function () {
+        var emInstance;
+
+        App.contracts.TradingEmissions.deployed().then(function (instance) {
+            emInstance = instance;
+
+
+            document.getElementById('emusLimit').innerHTML = emInstance.getEmuLimit({from:App.getAccount()});
+            // App.updateMarket();
+        }).catch(function (err) {
+            console.log(err.message);
+        });
+    },
+
+    setFine : function () {
+        var emInstance;
+
+        App.contracts.TradingEmissions.deployed().then(function (instance) {
+            emInstance = instance;
+
+            document.getElementById('fine').innerHTML = emInstance.getFine({from:App.getAccount()});
+            // App.updateMarket();
+        }).catch(function (err) {
+            console.log(err.message);
+        });
     }
 }
 
