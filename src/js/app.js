@@ -2,7 +2,6 @@
 App = {
     web3Provider: null,
     contracts: {},
-    //companies: {},
     market:[],
     account: 0x0,
 
@@ -33,16 +32,9 @@ App = {
             App.contracts.TradingEmissions.setProvider(App.web3Provider);
             account = App.getAccount();
 
-            // App.addToCompanies(account);
-            // Use our contract to retrieve and mark the adopted pets
-            return App.updateMarket();
+           // return App.updateMarket();
         });
         return App.bindEvents();
-    },
-
-    addToCompanies: function (company) {
-        App.companies.push(company);
-        console.log("added " + company + " to companies");
     },
 
     addToMarket: function (address) {
@@ -57,10 +49,8 @@ App = {
     bindEvents: function () {
         $(document).on('click', '#btn-buy', App.buy);
         $(document).on('click', '#btn-sell', App.sell);
-        // $(document).on('click', '.btn-update', App.updateMarket);
     },
 
-    // TODO: add register company, remove company
     updateMarket: function () {
         App.contracts.TradingEmissions.deployed().then(function (instance) {
                 console.log(instance.contract);
@@ -70,7 +60,7 @@ App = {
                 for (var i = 0; i < App.market.length; i++) {
                     var sellerAccount = App.market[i];
                     console.log("seller = " + sellerAccount);
-                    if(sellerAccount !== undefined) {
+                    if(sellerAccount !== undefined) { // && sellerAccount !== account
                         var emus = emInstance.getEmus({from: account});
                         console.log("emus from contract =  " + emus)
                         marketEmus += emus;
@@ -84,6 +74,8 @@ App = {
         });
     },
 
+
+    // Sell Emus from the market
     sell: function () {
         var emusToSell = document.getElementById('form-sell').value;
         console.log("sell " + account + " , " + emusToSell);
@@ -92,22 +84,32 @@ App = {
         App.contracts.TradingEmissions.deployed().then(function (instance) {
             emInstance = instance;
             emInstance.putEmusOnSale(emusToSell);
-            console.log("put enums " + emusToSell + " on sale");
-            // console.log(App.companies)
-            // var company = App.companies[account];
-            // company.enumsToSell = emusToSell;
-
-            App.addToMarket(account);
-            var val = document.getElementById('marketEmus').innerHTML;
-            document.getElementById('marketEmus').innerHTML = parseInt(val) + parseInt(emusToSell);
-            //App.updateMarket();
+       
+            // Updates when transaction is mined
+            web3.eth.filter('latest', function(error, result){
+            if (!error) {
+                console.log("latest block mined");    
+                console.log("put enums " + emusToSell + " on sale");
+                
+                App.addToMarket(account);
+                App.setMarketEmus(emusToSell);
+            } else {
+                console.error(error)
+            }
+            });
 
         }).catch(function (err) {
             console.log(err.message);
         });
     },
 
+    setMarketEmus: function(emusToAdd) {
+        var val = document.getElementById('marketEmus').innerHTML;
+        document.getElementById('marketEmus').innerHTML = parseInt(val) + parseInt(emusToAdd);
+    },
 
+
+    // Buys Emus from the market
     buy: function () {
         var emusToBuy = document.getElementById('form-buy').value;
         console.log("buy " + emusToBuy);
@@ -117,34 +119,29 @@ App = {
             emInstance = instance;
 
             for(var i = 0; i < App.market.length; i++) {
-                if (emusToBuy > 0) {
+                if (emusToBuy > 0 && marketEmus > emusToBuy) {
                     var seller = App.market[i];
                     console.log("seller = " + seller);
                     if (seller !== undefined && seller !== '0x0000000000000000000000000000000000000000') {                        
-                      /*   emInstance.getEmusOnSale(function(err, data) { 
-                             if(err) {
-                                 console.log("ERROOOOOR " + err);
-                             }
-                            // TODO: Error: new BigNumber() not a number: function (err, data) 
-                            console.log("data = " + data);
-                            var emusOnSale = new BigNumber(data);
-
-                            console.log("emusOnSale = " + emusOnSale);                         
-                            console.log("buys from " + seller);
-
-                            emInstance.buyEmus(seller, emusOnSale, {from: account, value:web3.toWei('200','wei')});
-                            console.log("bought " + emusOnSale + " from " + seller);
-                            emusToBuy -= emusOnSale;
-                            
-                            var val = document.getElementById('marketEmus').innerHTML;
-                            document.getElementById('marketEmus').innerHTML = parseInt(val) - emusToBuy; 
-                          */
+                          console.log("buys from " + seller);
+                          console.log("bought " + emusOnSale + " from " + seller);
+                        
+                          emusToBuy -= emusOnSale;                          
                           emInstance.buyEmus(seller, emusToBuy, {from: account, value:200});
+
+                          // Updates when transaction is mined
+                          web3.eth.filter('latest', function(error, result){
+                            if (!error) {
+                                console.log("latest block mined");
+                                App.setMarketEmus(emusToBuy * -1);
+                            } else {
+                              console.error(error)
+                            }
+                          });
                         }
                     }
                 }
-            console.log("got here");
-            App.updateMarket();
+           // App.updateMarket();
         }).catch(function (err) {
             console.log(err.message);
         });
