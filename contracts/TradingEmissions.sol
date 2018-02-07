@@ -50,12 +50,17 @@ contract tradingEmissions is mortal {
     _;
   }
   
+  event Print(string _name, uint _value);
+   
   function buyEmusFromMarket(uint emus) public payable {
     for(uint i = 0; i < market.length; i++) {
       if(emus <= 0) { // if all emus is bought we return
         return;
       }
       emus -= buyEmus(msg.sender, market[i], emus, msg.value); // buy and decrease emus
+      // Bconsole.log("bought:" + msg.sender + " " +  market[i]+ " " +  emus+ " " +  msg.value);
+     // string logMsg = "bought:" + msg.sender + ", " +  market[i]+ ", " +  emus + ", " +  msg.value;
+        Print("msg.sender", emus);
     }
 
   }
@@ -200,6 +205,10 @@ contract tradingEmissions is mortal {
     
   function getEmuLimit() view public returns (uint) {
     return companies[msg.sender].emuLimit;
+  }
+
+  function getMarket() view public returns (address[]) {
+      return market;
   }
 
   function getEmusOnSale() view public returns (uint) {
