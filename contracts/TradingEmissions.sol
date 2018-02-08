@@ -52,6 +52,7 @@ contract tradingEmissions is mortal {
   
   event Print(string _name, uint _value);
    
+   // TODO: VM error: revert. revert	The transaction has been reverted to the initial state.
   function buyEmusFromMarket(uint emus) public payable {
     for(uint i = 0; i < market.length; i++) {
       if(emus <= 0) { // if all emus is bought we return
