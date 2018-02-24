@@ -51,19 +51,17 @@ contract tradingEmissions is mortal {
   }
   
   event Print(string _name, uint _value);
+  event PrintAddress(string _name, address _address);
    
-   // TODO: VM error: revert. revert	The transaction has been reverted to the initial state.
+  // TODO: cannot buy more than from one seller
   function buyEmusFromMarket(uint emus) public payable {
     for(uint i = 0; i < market.length; i++) {
       if(emus <= 0) { // if all emus is bought we return
         return;
       }
       emus -= buyEmus(msg.sender, market[i], emus, msg.value); // buy and decrease emus
-      // Bconsole.log("bought:" + msg.sender + " " +  market[i]+ " " +  emus+ " " +  msg.value);
-     // string logMsg = "bought:" + msg.sender + ", " +  market[i]+ ", " +  emus + ", " +  msg.value;
-        Print("msg.sender", emus);
+      Print("emus left to buy = ", emus);
     }
-
   }
 
   function removeCompanyFromMarket(address company) public payable {
@@ -200,21 +198,47 @@ contract tradingEmissions is mortal {
   }
 
 
-  function getEmus() view public returns (int) {
+  function getSenderEmus() view public returns (int) {
     return companies[msg.sender].emus;
   }
     
-  function getEmuLimit() view public returns (uint) {
+  function getSenderEmuLimit() view public returns (uint) {
     return companies[msg.sender].emuLimit;
   }
 
   function getMarket() view public returns (address[]) {
       return market;
   }
+  
+ 
+  function getCompaniesInMarket() view public returns (Company[]) {
+    Company[] comps;
+    for(uint i = 0; i < market.length; i++) {
+      address sellerAd = market[i];
+      Company seller = companies[sellerAd];
+      comps.push(seller); // TODO: throws VM error: out of gas.
+  //    PrintAddress(seller.name, sellerAd);
+    }
+    return comps;
+  }
 
-  function getEmusOnSale() view public returns (uint) {
+  function getSenderEmusOnSale() view public returns (uint) {
     return companies[msg.sender].emusOnSale;
   }
+  
+  function getAllEmusOnSale() view public returns (uint) {
+    uint totalEmusOnSale = 0;
+    for(uint i = 0; i < market.length; i++) {
+      address sellerAd = market[i];
+      Company seller = companies[sellerAd];
+      totalEmusOnSale += seller.emusOnSale;
+      Print("seller.emusOnSale = ", seller.emusOnSale);
+    }
+    Print("totalEmusOnSale = ", totalEmusOnSale);
+    return totalEmusOnSale;
+  }
+  
+  
 
   function getFine() view public returns (string) {
     return bytes32ToString(uintToBytes(companies[msg.sender].fine));
