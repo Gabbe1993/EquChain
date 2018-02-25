@@ -1,3 +1,6 @@
+### Development continued on Hyperledger repository:
+https://github.com/Gabbe1993/equchain-hyperledger
+
 # equchain
 Emissions Trading Market are widely considered as one of the first and most successful steps transitioning to clean energies. However, current systems, in Russia, EU, USA, China, etc. rely on manual labor, with the use of regulators and auditors (sources below).  
 
